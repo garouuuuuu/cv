@@ -17,7 +17,6 @@
     {
       name: "Luigi Papalia",
       linkedin: "linkedin.com/in/luigi-papalia",
-      github: "github.com/garouuuuuu/cv",
     },
     LP.profile || {}
   );
