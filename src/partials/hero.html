@@ -1,0 +1,41 @@
+<section class="hero" id="top" aria-labelledby="hero-name" data-hero>
+  <p class="sh">Name</p>
+  <div class="hero__grid body">
+    <div class="hero__main">
+      <h1 class="hero__name" id="hero-name">
+        <span class="visually-hidden" data-profile="name">Luigi Papalia</span>
+        <span class="banner-wrap" aria-hidden="true"><span class="banner" data-banner>██╗     ██╗   ██╗██╗ ██████╗ ██╗
+██║     ██║   ██║██║██╔════╝ ██║
+██║     ██║   ██║██║██║  ███╗██║
+██║     ██║   ██║██║██║   ██║██║
+███████╗╚██████╔╝██║╚██████╔╝██║
+╚══════╝ ╚═════╝ ╚═╝ ╚═════╝ ╚═╝
+
+██████╗  █████╗ ██████╗  █████╗ ██╗     ██╗ █████╗ 
+██╔══██╗██╔══██╗██╔══██╗██╔══██╗██║     ██║██╔══██╗
+██████╔╝███████║██████╔╝███████║██║     ██║███████║
+██╔═══╝ ██╔══██║██╔═══╝ ██╔══██║██║     ██║██╔══██║
+██║     ██║  ██║██║     ██║  ██║███████╗██║██║  ██║
+╚═╝     ╚═╝  ╚═╝╚═╝     ╚═╝  ╚═╝╚══════╝╚═╝╚═╝  ╚═╝</span></span>
+      </h1>
+      <script>requestAnimationFrame(function () { var h = document.querySelector("[data-hero]"); if (h) h.setAttribute("data-painted", ""); });</script>
+      <p class="hero__role">cybersecurity engineer, <span class="hi">the wildcard (*)</span></p>
+      <div class="hero__synopsis">
+        <h2 class="sh">Synopsis</h2>
+        <p class="synopsis"><b>papalia</b> <span class="opt">[--comply iso27001|pci-dss|gdpr]</span> <span class="opt">[--devsecops sca|sast|dast|iac]</span> <span class="opt">[--gate ci-cd]</span> <span class="opt">[--troubleshoot infra|network]</span></p>
+      </div>
+      <div class="hero__cta">
+        <a class="cmd" href="#contact">get in touch</a>
+        <a class="cmd cmd--quiet" href="#cases">read the case files</a>
+        <a class="cmd cmd--quiet" href="Luigi-Papalia-CV.pdf" data-site-only>download the pdf</a>
+        <button class="cmd cmd--quiet" type="button" data-action="terminal">open the interactive résumé</button>
+      </div>
+      <p class="hero__status">status: applying for Security Engineer at Bending Spoons<span class="blink" aria-hidden="true"></span></p>
+    </div>
+    <figure class="hero__art box" aria-hidden="true">
+      <span class="box__title">wildcard.obj</span>
+      <canvas data-hero-canvas></canvas>
+      <figcaption class="box__caption hero__hud"><span data-hud-rot>* matches any problem</span></figcaption>
+    </figure>
+  </div>
+</section>

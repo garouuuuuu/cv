@@ -1,0 +1,419 @@
+/* iso.css: case file 1, annex-a.txt. Block digits, phases, a text bar, the Annex A matrix, a
+   status line and the box-drawn CERTIFIED stamp, all on one character grid: 13px text, 22px
+   lines. Everything is scoped to #case-iso. */
+
+#case-iso .iso {
+  --iso-lh: 22px;
+  --pitch: 2ch; /* one control cell: a square glyph and a space */
+  --sq: 7px; /* the square */
+  position: relative;
+  display: grid;
+  gap: var(--iso-lh) 0; /* one blank line between blocks */
+  min-width: 0;
+  color: var(--fg-2);
+  font-size: var(--t-sm);
+  line-height: var(--iso-lh);
+  font-variant-numeric: tabular-nums;
+}
+
+#case-iso .iso[data-layout="w1"],
+#case-iso .iso[data-layout="n1"] {
+  --pitch: 1ch;
+  --sq: 5px;
+}
+
+#case-iso .iso__probe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+#case-iso .iso__probe > span {
+  display: block;
+  width: 100ch;
+}
+
+/* ---------------------------------------------------------------- Top band */
+#case-iso .iso__top {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  grid-template-areas:
+    "big phases slot"
+    "bar bar slot";
+  column-gap: 4ch;
+  align-items: start;
+  min-width: 0;
+}
+
+#case-iso .iso[data-top="stack"] .iso__top {
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas:
+    "big slot"
+    "bar bar"
+    "phases phases";
+  column-gap: 2ch;
+}
+
+#case-iso .iso__big {
+  grid-area: big;
+}
+
+#case-iso .iso__digits {
+  display: block;
+  max-width: none;
+}
+
+/* Seven-segment block digits: lit segments red, unlit ones in the unlit-cell color. A segment
+   switching on warms up through pale red; one switching off passes deep red. */
+#case-iso .iso__px {
+  fill: var(--red);
+}
+
+#case-iso .iso__px-off {
+  fill: var(--red-4);
+}
+
+#case-iso .iso__px-cool {
+  fill: var(--red-2);
+}
+
+#case-iso .iso__px-warm {
+  fill: var(--red-3);
+}
+
+/* Phases: [x] done, [-] in progress (a spinner turned by the scroll), [ ] to do */
+#case-iso .iso__phases {
+  grid-area: phases;
+  list-style: none;
+  white-space: pre;
+}
+
+#case-iso .iso[data-top="stack"] .iso__phases {
+  margin-top: var(--iso-lh);
+}
+
+#case-iso .iso__mk {
+  color: var(--fg-3);
+}
+
+#case-iso .iso__mk b {
+  font-weight: 700;
+}
+
+#case-iso .iso__ph[data-state="done"] .iso__mk b {
+  color: var(--fg);
+}
+
+#case-iso .iso__ph[data-state="done"] .iso__phl {
+  color: var(--fg-2);
+}
+
+#case-iso .iso__ph[data-state="active"] .iso__mk,
+#case-iso .iso__ph[data-state="active"] .iso__mk b {
+  color: var(--red);
+}
+
+#case-iso .iso__ph[data-state="active"] .iso__phl {
+  color: var(--fg);
+}
+
+#case-iso .iso__ph[data-state="todo"] .iso__phl {
+  color: var(--fg-3);
+}
+
+/* Text bar: [██████████████████████████░░] 94% */
+#case-iso .iso__bar {
+  grid-area: bar;
+  color: var(--fg);
+  white-space: pre;
+}
+
+#case-iso .iso__br {
+  color: var(--fg-3);
+}
+
+#case-iso .iso__fill,
+#case-iso .iso__rest {
+  display: inline-block;
+  width: calc(var(--n, 0) * 1ch);
+  height: 14px;
+  vertical-align: -2px;
+}
+
+#case-iso .iso__fill {
+  background: var(--red);
+}
+
+/* ░: a light-shade dot pattern, as a mask so the color stays a token */
+#case-iso .iso__rest {
+  background: var(--red-2);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='2' height='2'%3E%3Crect width='1' height='1'/%3E%3C/svg%3E") 0 0 / 2px 2px repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='2' height='2'%3E%3Crect width='1' height='1'/%3E%3C/svg%3E") 0 0 / 2px 2px repeat;
+}
+
+#case-iso .iso__pct {
+  color: var(--fg);
+}
+
+/* ---------------------------------------------------------------- Stamp */
+/* The slot reserves the band; iso.js places the stamp in it on whole cells and lines. */
+#case-iso .iso__slot {
+  grid-area: slot;
+  align-self: stretch;
+  position: relative;
+  min-width: 0;
+  pointer-events: none;
+}
+
+/* --cols x --rows character cells. The words sit one per row inside the frame. */
+#case-iso .iso__stamp {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: grid;
+  align-content: center;
+  width: calc(var(--cols, 19) * 1ch);
+  height: calc(var(--rows, 4) * var(--iso-lh));
+  color: var(--red-4); /* unlit until the certification audit closes, like every mark here */
+  text-align: center;
+  white-space: pre;
+}
+
+/* ╔═╗ ║ ╚═╝: a double rule through the centres of the outer cells, so it joins at any line
+   height and never depends on a fallback font's box-drawing glyphs. */
+#case-iso .iso__stamp::before {
+  content: "";
+  position: absolute;
+  inset: calc(var(--iso-lh) / 2 - 1.5px) calc(0.5ch - 1.5px);
+  border: 3px double currentColor;
+}
+
+#case-iso .iso__stamp.is-on {
+  color: var(--red);
+}
+
+/* The landing: one frame of inverse video over the stamp's cells, then ink. */
+#case-iso .iso__stamp.is-press {
+  background: var(--red);
+  color: var(--on-red);
+}
+
+#case-iso .iso__st1 {
+  font-weight: 800;
+}
+
+#case-iso .iso__st2 {
+  font-weight: 500;
+}
+
+/* ---------------------------------------------------------------- Matrix */
+#case-iso .iso__matrix {
+  display: grid;
+  min-width: 0;
+}
+
+#case-iso .iso__row,
+#case-iso .iso__ruler {
+  display: grid;
+  grid-template-columns: 20ch calc(var(--pitch) * 37) auto;
+  align-items: center;
+  min-width: 0;
+}
+
+#case-iso .iso__ruler {
+  color: var(--fg-3);
+  white-space: pre;
+}
+
+/* Ruler marks are placed over the cells they number (left = (n - 1) * pitch, from iso.js). */
+#case-iso .iso__rt {
+  grid-column: 2 / 4;
+  position: relative;
+  height: var(--iso-lh);
+}
+
+#case-iso .iso__rm {
+  position: absolute;
+  top: 0;
+}
+
+#case-iso .iso__label {
+  justify-self: start;
+  color: var(--fg-2);
+  white-space: pre;
+}
+
+#case-iso .iso__label b {
+  color: var(--fg);
+  font-weight: 700;
+}
+
+#case-iso .iso__cells {
+  display: flex;
+  height: var(--iso-lh);
+}
+
+/* The theme's number of controls */
+#case-iso .iso__n {
+  padding-left: 2ch;
+  color: var(--fg-3);
+  white-space: pre;
+}
+
+/* One control: a button the width of the pitch; the glyph sits in its first character cell
+   (narrower on the smallest phones, where the pitch drops below one cell) */
+#case-iso .iso__c {
+  display: block;
+  flex: none;
+  width: var(--pitch);
+  height: var(--iso-lh);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--red-4);
+  cursor: crosshair;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#case-iso .iso__c > i {
+  display: grid;
+  place-items: center;
+  width: min(1ch, var(--pitch));
+  height: 100%;
+}
+
+#case-iso .iso__c > i::before {
+  content: "";
+  width: var(--sq);
+  height: var(--sq);
+  background: currentColor;
+}
+
+#case-iso .iso__c.is-on {
+  color: var(--red);
+}
+
+#case-iso .iso__c.is-warm {
+  color: var(--red-3);
+}
+
+#case-iso .iso__c.is-hot {
+  color: var(--fg);
+}
+
+/* The internal-audit sweep: a column of deep-red cursor cells */
+#case-iso .iso__c.is-scan > i {
+  background: var(--red-2);
+}
+
+/* Block cursor on the control being read */
+#case-iso .iso__c:focus-visible {
+  outline: none;
+}
+
+#case-iso .iso__c:focus-visible > i {
+  background: var(--fg);
+  outline: 2px solid var(--red);
+  outline-offset: 2px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  #case-iso .iso__c:hover > i {
+    background: var(--fg);
+  }
+
+  #case-iso .iso__row:hover .iso__label,
+  #case-iso .iso__row:hover .iso__label b {
+    color: var(--fg);
+  }
+
+  #case-iso .iso__label:hover {
+    background: var(--red);
+    color: var(--on-red);
+  }
+
+  #case-iso .iso__label:hover b {
+    color: var(--on-red);
+  }
+}
+
+/* Phones: label and count on one line, the cells under them. A tap reads out the row. */
+#case-iso .iso[data-layout="n1"] .iso__row {
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "label n"
+    "cells cells";
+  -webkit-tap-highlight-color: transparent;
+}
+
+#case-iso .iso[data-layout="n1"] .iso__label {
+  grid-area: label;
+}
+
+#case-iso .iso[data-layout="n1"] .iso__n {
+  grid-area: n;
+}
+
+/* The cells hug their label; a gap separates one theme from the next. */
+#case-iso .iso[data-layout="n1"] .iso__cells {
+  grid-area: cells;
+  height: 14px;
+}
+
+#case-iso .iso[data-layout="n1"] .iso__c {
+  height: 14px;
+}
+
+#case-iso .iso[data-layout="n1"] .iso__row {
+  padding-bottom: 10px;
+}
+
+#case-iso .iso[data-layout="n1"] .iso__ruler {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+#case-iso .iso[data-layout="n1"] .iso__rl {
+  display: none;
+}
+
+#case-iso .iso[data-layout="n1"] .iso__rt {
+  grid-column: 1;
+}
+
+#case-iso .iso__row.is-sel .iso__label,
+#case-iso .iso__row.is-sel .iso__label b {
+  background: var(--red);
+  color: var(--on-red);
+}
+
+@media (hover: none), (pointer: coarse) {
+  #case-iso .iso__c {
+    pointer-events: none;
+  }
+}
+
+/* ---------------------------------------------------------------- Status line */
+/* Hanging indent, as in a man page: a wrapped readout continues under the key, not the prompt */
+/* min-height is set by iso.js: two lines where the longest readout would wrap. */
+#case-iso .iso__status {
+  min-height: var(--iso-lh);
+  padding-left: 2ch;
+  text-indent: -2ch;
+  color: var(--fg-2);
+  white-space: pre-wrap;
+}
+
+#case-iso .iso__sp {
+  color: var(--red);
+}
+
+#case-iso .iso__sk {
+  color: var(--fg);
+  font-weight: 700;
+}

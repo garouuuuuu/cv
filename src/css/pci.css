@@ -1,0 +1,259 @@
+/* pci.css: case file 3, cardholder-data.flow. A box-drawn test card wired into an
+   entry -> module -> storage pipeline (drawn by pci.js on a character-grid canvas), a status
+   line, and the 12 principal requirements of PCI DSS v4.0.1 with an inverse-video cursor.
+   On phones the requirements become a grid of numbers right under the flow, with their names
+   below as a legend. Everything is scoped to #case-pci. */
+
+#case-pci .pci {
+  --pci-lh: 22px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+  min-width: 0;
+  color: var(--fg-2);
+  font-size: var(--t-sm);
+  line-height: var(--pci-lh);
+}
+
+/* The scene canvas: sized in CSS px by pci.js to whole character cells (never scaled down,
+   which would blur the grid); until then width="0" height="0" keep it out of the layout */
+#case-pci .pci__scene {
+  display: block;
+  max-width: none;
+  margin: 2px 0 0;
+}
+
+/* ---------------------------------------------------------------- Status line */
+#case-pci .pci__status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0 2ch;
+  min-height: 40px;
+  margin-top: 14px;
+}
+
+#case-pci .pci__log {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--fg-2);
+  white-space: nowrap;
+  text-overflow: clip;
+}
+
+/* The requirement under the cursor, named in the status line on phones only (wider screens
+   show the cursor in the list itself) */
+#case-pci .pci__sr {
+  display: none;
+}
+
+/* Narrow screens: the readout takes the full first row and wraps under the stage name; the
+   second row names the requirement being walked, or holds [ replay ] when none is. pci.js sets
+   the min-height to the longest readout at this width, so the grid below never moves. */
+@media (max-width: 600px) {
+  #case-pci .pci__status {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "log log" "sr replay";
+    align-items: start;
+    align-content: start;
+    gap: 0;
+    min-height: calc(3 * var(--pci-lh));
+  }
+  #case-pci .pci__log {
+    grid-area: log;
+    padding-left: 2ch;
+    text-indent: -2ch;
+    white-space: normal;
+  }
+  /* Its red number under the red ">", wrapped lines under the requirement's name */
+  #case-pci .pci__sr {
+    grid-area: sr;
+    display: block;
+    min-width: 0;
+    padding-left: 3ch;
+    text-indent: -3ch;
+    color: var(--fg-2);
+  }
+  #case-pci .pci__replay {
+    grid-area: replay;
+    justify-self: end;
+    margin-top: calc((var(--pci-lh) - 40px) / 2);
+  }
+  #case-pci .pci__status.is-walking .pci__replay {
+    display: none;
+  }
+}
+
+#case-pci .pci__sp {
+  color: var(--red);
+}
+
+/* The stage name sits in a fixed 9-column field so the note never jumps sideways */
+#case-pci .pci__sk {
+  display: inline-block;
+  min-width: 9ch;
+  text-indent: 0;
+  color: var(--fg);
+  font-weight: 700;
+}
+
+#case-pci .pci__replay {
+  flex: none;
+  margin-right: -0.5ch;
+  font-size: var(--t-sm);
+}
+
+#case-pci .pci__replay[hidden] {
+  display: none;
+}
+
+/* ---------------------------------------------------------------- Requirements */
+#case-pci .pci__head {
+  margin: 22px 0 10px;
+  padding-top: 20px;
+  border-top: 1px dashed var(--line);
+  color: var(--fg-3);
+  font-size: var(--t-xs);
+  letter-spacing: 0.04em;
+}
+
+#case-pci .pci__reqs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, max-content));
+  grid-template-rows: repeat(6, auto);
+  grid-auto-flow: column;
+  column-gap: 6ch;
+  list-style: none;
+  margin-left: -1ch;
+}
+
+#case-pci .pci__reqs li {
+  min-width: 0;
+}
+
+/* One requirement: a button holding one line of mono text; the cursor inverts the text itself,
+   line by line if it wraps. A wrapped item continues under its text, not under the number. */
+#case-pci .pci__req {
+  display: block;
+  max-width: 100%;
+  margin: 0;
+  padding: 0 0 0 3ch;
+  border: 0;
+  background: transparent;
+  color: var(--fg-2);
+  font: inherit;
+  line-height: var(--pci-lh);
+  text-align: left;
+  text-indent: -3ch;
+  cursor: default;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+#case-pci .pci__line {
+  padding: 0 1ch;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+#case-pci .pci__n {
+  color: var(--red);
+  font-weight: 500;
+}
+
+#case-pci .pci__req:focus {
+  outline: none;
+}
+
+#case-pci .pci__req.is-cur .pci__line,
+#case-pci .pci__req:focus-visible .pci__line {
+  background: var(--red);
+  color: var(--on-red);
+}
+
+#case-pci .pci__req.is-cur .pci__n,
+#case-pci .pci__req:focus-visible .pci__n {
+  color: var(--on-red);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  #case-pci .pci__req {
+    cursor: pointer;
+  }
+}
+
+/* One column once the two no longer fit side by side */
+@media (max-width: 860px) {
+  #case-pci .pci__reqs {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    grid-auto-flow: row;
+  }
+}
+
+/* Touch: every requirement is a tap target at least 40px tall; the inverse stays one line */
+@media (hover: none) and (pointer: coarse) {
+  #case-pci .pci__req {
+    width: 100%;
+    padding-block: 9px;
+  }
+}
+
+/* How to walk the list: keyboard and pointer, or touch (chrome.css swaps the two) */
+#case-pci .pci__hint {
+  margin-top: 10px;
+  color: var(--fg-3);
+  font-size: var(--t-xs);
+  line-height: 1.6;
+  letter-spacing: 0.04em;
+}
+
+/* Names of the requirements as plain text, for the phone grid of numbers */
+#case-pci .pci__legend {
+  display: none;
+}
+
+/* Phones: the twelve requirements as a grid of numbers, six to a row, right under the flow, so
+   the cursor stays on screen with it. Each number is a 40px tap target and keeps its name as
+   its accessible name; the names follow as a legend. */
+@media (max-width: 600px) {
+  /* Cells of 7 columns, numbers on the character grid under the heading's first letter */
+  #case-pci .pci__reqs {
+    grid-template-columns: repeat(6, minmax(0, 7ch));
+    grid-template-rows: none;
+    grid-auto-flow: row;
+    column-gap: 0;
+  }
+  #case-pci .pci__req {
+    width: 100%;
+    min-height: 40px;
+    padding: 9px 0;
+    text-indent: 0;
+  }
+  #case-pci .pci__t {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+  #case-pci .pci__legend {
+    display: block;
+    margin-top: 16px;
+    list-style: none;
+    color: var(--fg-2);
+  }
+  #case-pci .pci__legend li {
+    padding-left: 3ch;
+    text-indent: -3ch;
+  }
+  #case-pci .pci__legend li.is-cur {
+    color: var(--fg);
+  }
+}
+
+#case-pci .pci-fig .box__caption {
+  margin-top: 22px;
+}

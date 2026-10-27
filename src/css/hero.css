@@ -1,0 +1,130 @@
+/* hero.css: the NAME section (hero module). Scoped to .hero. */
+
+/* ---------------------------------------------------------------- Banner */
+
+/* The SVG rendering replaces the text banner once it is built (the text stays for no-JS). */
+.hero .banner-wrap.is-svg .banner {
+  display: none;
+}
+
+.hero .banner-svg {
+  display: block;
+  overflow: visible;
+}
+
+.hero .hb-b,
+.hero .hb-pb {
+  fill: var(--red);
+}
+
+.hero .hb-s,
+.hero .hb-ps {
+  fill: var(--red-2);
+}
+
+/* ---------------------------------------------------------------- Left column */
+
+/* The red phrase moves to the next line as a unit instead of splitting. */
+.hero .hero__role .hi {
+  white-space: nowrap;
+}
+
+.hero .hero__synopsis {
+  /* An inline-size container: the options never wrap inside, so the line's font is capped to
+     fit the hanging indent plus the longest option (38ch, with headroom for platforms that round
+     glyph advances to whole pixels) instead of pushing the column wider. */
+  container-type: inline-size;
+}
+
+.hero .hero__synopsis .sh {
+  margin-bottom: 14px;
+}
+
+.hero .synopsis {
+  font-size: min(var(--t-base), 4.1cqi);
+}
+
+/* ---------------------------------------------------------------- Wildcard box */
+
+.hero .hero__art canvas {
+  touch-action: pan-y;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Only a drag on the object turns it: say so with the cursor (no drag with reduced motion). */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .hero .hero__art canvas {
+    cursor: grab;
+  }
+
+  .hero .hero__art canvas.is-held {
+    cursor: grabbing;
+  }
+}
+
+/* One line: the caption at rest, the rotation readout while the object is held. */
+.hero .hero__hud {
+  overflow: hidden;
+  white-space: pre;
+}
+
+/* Desktop: the box runs from the banner's top edge to the status line; the object sits centered. */
+@media (min-width: 900.02px) {
+  .hero .hero__grid {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 4fr);
+    align-items: stretch;
+  }
+
+  .hero .hero__art {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .hero .hero__art canvas {
+    margin-block: auto;
+  }
+}
+
+/* Tablet: the banner spans the width; the box sits beside role, synopsis and commands. */
+@media (min-width: 700.02px) and (max-width: 900px) {
+  .hero .hero__grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.82fr);
+    gap: 22px 4ch;
+    align-items: start;
+  }
+
+  .hero .hero__main {
+    display: contents;
+  }
+
+  .hero .hero__name {
+    grid-column: 1 / -1;
+    margin-bottom: 4px;
+  }
+
+  .hero .hero__art {
+    grid-column: 2;
+    grid-row: 2 / span 4;
+    margin-top: 6px;
+  }
+}
+
+/* Phone: the box follows the status line, aligned to the text column, with the object drawn
+   smaller and centered so the panel does not take over the screen. */
+@media (max-width: 700px) {
+  .hero .hero__art {
+    margin-top: 12px;
+  }
+
+  .hero .hero__art canvas {
+    width: min(100%, 300px);
+    margin-inline: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero .hero__art canvas {
+    width: min(100%, 264px);
+  }
+}

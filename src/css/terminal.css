@@ -1,0 +1,530 @@
+/* terminal.css: the shell overlay, PAPALIA(1)'s command line.
+   A modal <dialog> in the top layer: a flat scrim, then a box-drawn window whose title and
+   [ esc ] button are set into the top border, a log, a prompt with a block cursor and a row of
+   quick commands. Desktop: centered, 100 columns by about 70vh. Phones: a full-width bottom sheet.
+   Every size is a whole number of character cells (1ch) or text rows (1.6em). */
+
+.terminal {
+  position: fixed;
+  inset: 0;
+  z-index: 200; /* only matters where <dialog> has no top layer */
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--fg);
+  font-family: var(--f-mono);
+  font-feature-settings: "calt" 0, "liga" 0;
+  font-variant-ligatures: none;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent; /* no system-blue flash on tap; :active inverts instead */
+}
+
+.terminal .cmd:active,
+.terminal .t-run:active,
+.terminal .t-link:active {
+  background: var(--red);
+  color: var(--on-red);
+}
+
+.terminal .cmd:active::before,
+.terminal .cmd:active::after {
+  color: var(--on-red);
+}
+
+/* Touch screens keep :hover on the last tapped element; inside the shell only :active inverts. */
+@media (hover: none) {
+  .terminal .cmd:hover:not(:active):not(:focus-visible),
+  .terminal .t-run:hover:not(:active):not(:focus-visible),
+  .terminal .t-link:hover:not(:active):not(:focus-visible) {
+    background: transparent;
+    color: var(--fg);
+  }
+  .terminal .t-run--red:hover:not(:active):not(:focus-visible) {
+    color: var(--red);
+  }
+  .terminal .t-link:hover:not(:active):not(:focus-visible) {
+    text-decoration: underline;
+    text-decoration-color: var(--red);
+  }
+  .terminal .cmd:hover:not(:active):not(:focus-visible)::before,
+  .terminal .cmd:hover:not(:active):not(:focus-visible)::after {
+    color: var(--fg-3);
+  }
+}
+
+.terminal::backdrop {
+  background: transparent;
+}
+
+.terminal:focus,
+.terminal__win:focus {
+  outline: none;
+}
+
+/* Flat dark scrim: the page stays faintly visible behind it. No blur. */
+.terminal__scrim {
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+  opacity: 0.93;
+  touch-action: none;
+}
+
+/* ---------------------------------------------------------------- Window */
+.terminal__win {
+  --row: 1.6em;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  width: min(calc(104ch + 2px), calc(100% - 2 * var(--gutter)));
+  height: min(clamp(320px, 70vh, 820px), calc(100vh - 32px));
+  margin: auto;
+  border: 1px solid var(--line-2);
+  border-block: 0; /* drawn by .terminal__top and .terminal__bottom, around their labels */
+  padding-top: 0.9em; /* the scroller starts below the title, so scrolled rows never cross it */
+  background: var(--bg);
+  font-size: var(--t-base);
+  line-height: 1.6;
+}
+
+/* The top and bottom borders: line segments with labels set into them, like .box__title.
+   Top: the title and [ esc ]. Bottom: the key hint. */
+.terminal__top,
+.terminal__bottom {
+  position: absolute;
+  left: -1px;
+  right: -1px;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  height: 1px;
+}
+
+.terminal__top {
+  top: 0;
+}
+
+.terminal__bottom {
+  bottom: 0;
+}
+
+.terminal__seg {
+  flex: 1 1 auto;
+  height: 1px;
+  background: var(--line-2);
+}
+
+.terminal__seg--lead {
+  flex: 0 0 2ch;
+}
+
+.terminal__seg--tail {
+  flex: 0 0 1.5ch;
+}
+
+.terminal__title {
+  flex: none;
+  margin: 0;
+  padding: 0;
+  color: var(--fg-3);
+  font-size: var(--t-xs);
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.terminal__title::before {
+  content: "┤ ";
+  content: "┤ " / "";
+  color: var(--line-2);
+}
+
+.terminal__title::after {
+  content: " ├";
+  content: " ├" / "";
+  color: var(--line-2);
+}
+
+.terminal__close {
+  flex: none;
+  margin: 0 0.5ch;
+  font-size: var(--t-xs);
+}
+
+/* ---------------------------------------------------------------- Screen: log + prompt */
+.terminal__screen {
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 0.35em 2ch 0.8em;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-2) transparent;
+}
+
+.terminal__screen::-webkit-scrollbar {
+  width: 6px;
+}
+
+.terminal__screen::-webkit-scrollbar-thumb {
+  background: var(--line-2);
+}
+
+.terminal__screen::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.terminal__log {
+  color: var(--fg-2);
+}
+
+/* One terminal row. Long rows wrap inside the window with a hanging indent (--hang cells),
+   after a left indent (--ind cells), so continuation rows stay on the character grid. */
+.terminal__ln {
+  min-height: var(--row);
+  padding-left: calc((var(--ind, 0) + var(--hang, 0)) * 1ch);
+  text-indent: calc(var(--hang, 0) * -1ch);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.terminal__ln--art {
+  white-space: pre;
+  overflow-wrap: normal;
+}
+
+/* Typed rows reveal through a stepped clip, one cell per step. */
+.terminal__typed {
+  display: inline-block;
+  text-indent: 0;
+  white-space: pre;
+}
+
+.terminal__ps1,
+.terminal .t-ps {
+  color: var(--red);
+}
+
+.terminal .t-in,
+.terminal .t-b {
+  color: var(--fg);
+}
+
+.terminal .t-b {
+  font-weight: 700;
+}
+
+.terminal .t-red {
+  color: var(--red);
+}
+
+.terminal .t-pale {
+  color: var(--red-3);
+}
+
+.terminal .t-deep {
+  color: var(--red-2);
+}
+
+.terminal .t-dim {
+  color: var(--fg-3);
+}
+
+.terminal .t-head {
+  color: var(--red);
+  font-weight: 700;
+}
+
+.terminal .t-var {
+  color: var(--fg-2);
+  text-decoration: underline;
+  text-decoration-color: var(--line-2);
+  text-underline-offset: 3px;
+}
+
+.terminal .t-on {
+  color: var(--red);
+}
+
+.terminal .t-off {
+  color: var(--red-4);
+}
+
+/* In-page links: underlined in red, inverse video on hover and focus. */
+.terminal .t-link {
+  color: var(--fg);
+  text-decoration: underline;
+  text-decoration-color: var(--red);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+/* Runnable words (help entries, suggestions): plain text that inverts under the pointer. */
+.terminal .t-run {
+  display: inline;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--fg);
+  font: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+  text-indent: 0;
+  text-align: left;
+  white-space: inherit;
+  cursor: pointer;
+}
+
+.terminal .t-run--red {
+  color: var(--red);
+}
+
+.terminal .t-link:hover,
+.terminal .t-link:focus-visible,
+.terminal .t-run:hover,
+.terminal .t-run:focus-visible {
+  background: var(--red);
+  color: var(--on-red);
+  text-decoration: none;
+  outline: none;
+}
+
+.terminal .t-copy {
+  min-height: 0;
+  padding: 0;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+/* While output prints, the cursor rides at its end: one cell, the same glyph box as the prompt's. */
+.terminal__tcur {
+  background: var(--red);
+  color: var(--on-red);
+  white-space: pre;
+}
+
+/* ---------------------------------------------------------------- Prompt */
+.terminal__prompt {
+  display: flex;
+  align-items: flex-start;
+  gap: 1ch;
+  margin: 0;
+}
+
+.terminal__ps1 {
+  flex: none;
+  white-space: pre;
+  cursor: text;
+}
+
+.terminal__line {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  cursor: text;
+}
+
+/* The mirror draws the command, the selection and the block cursor; the real input sits on top
+   with transparent text, so every glyph lands on its twin. */
+.terminal__mirror {
+  display: block;
+  min-height: var(--row);
+  color: var(--fg);
+  white-space: pre-wrap;
+  word-break: break-all;
+  pointer-events: none;
+}
+
+.terminal__input {
+  --in-scale: 1;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(100% / var(--in-scale));
+  height: var(--row);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: transparent;
+  caret-color: transparent;
+  font: inherit;
+  line-height: inherit;
+  letter-spacing: 0;
+  outline: none;
+  transform: scale(var(--in-scale));
+  transform-origin: 0 0;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.terminal__input::selection {
+  background: transparent;
+  color: transparent;
+}
+
+.terminal__input:focus-visible {
+  outline: none;
+}
+
+.terminal__cur {
+  background: var(--red);
+  color: var(--on-red);
+  animation: terminal-blink 1.05s steps(1) infinite;
+}
+
+.terminal__cur.is-typing {
+  animation: none;
+}
+
+/* Unfocused: a hollow block, as terminals draw it. */
+.terminal__cur.is-idle {
+  background: transparent;
+  color: inherit;
+  outline: 1px solid var(--red-2);
+  outline-offset: -1px;
+  animation: none;
+}
+
+.terminal__sel {
+  background: var(--red);
+  color: var(--on-red);
+}
+
+@keyframes terminal-blink {
+  50% {
+    background: transparent;
+    color: var(--fg);
+  }
+}
+
+/* While a command prints, the prompt waits below it, as a shell's does. */
+.terminal.is-busy .terminal__prompt {
+  opacity: 0;
+}
+
+/* ---------------------------------------------------------------- Quick commands */
+.terminal__keys {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 1ch;
+  padding: 2px 1.5ch 10px;
+  border-top: 1px dashed var(--line);
+  font-size: var(--t-sm);
+}
+
+.terminal__keys .cmd {
+  min-height: 40px;
+}
+
+.terminal__hint {
+  flex: none;
+  padding: 0;
+  color: var(--fg-3);
+  font-size: var(--t-xs);
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.terminal__hint::before {
+  content: "┤ ";
+  content: "┤ " / "";
+  color: var(--line-2);
+}
+
+.terminal__hint::after {
+  content: " ├";
+  content: " ├" / "";
+  color: var(--line-2);
+}
+
+/* The pen: the block cursor that draws the window when it opens. */
+.terminal__pen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 3;
+  width: 1ch;
+  height: var(--row);
+  background: var(--red);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Visually hidden helper inside the log (final values of animated meters). */
+.terminal .t-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.terminal__probe {
+  position: absolute;
+  visibility: hidden;
+  white-space: pre;
+  pointer-events: none;
+}
+
+/* ---------------------------------------------------------------- Narrow windows */
+/* Phones: a full-width bottom sheet that rises above the on-screen keyboard (--kb, --vvh). */
+@media (max-width: 640px) {
+  .terminal__win {
+    inset: auto 0 var(--kb, 0px) 0;
+    width: 100%;
+    height: min(84vh, 720px);
+    height: min(84dvh, calc(var(--vvh, 100dvh) - 40px), 720px);
+    margin: 0;
+    border-width: 0;
+    font-size: var(--t-sm);
+  }
+  .terminal__scrim {
+    opacity: 0.96;
+  }
+  .terminal__top {
+    left: 0;
+    right: 0;
+  }
+  .terminal__bottom {
+    display: none;
+  }
+  .terminal__screen {
+    padding: 0.4em 1.5ch 0.6em;
+  }
+  .terminal__keys {
+    padding: 2px 1ch calc(2px + env(safe-area-inset-bottom, 0px));
+  }
+  .terminal.is-kb .terminal__keys {
+    display: none;
+  }
+}
+
+/* ---------------------------------------------------------------- Touch targets */
+/* Touch: runnable words and links in the output are 40px tall targets. They stay inline on their
+   cells (baseline-aligned, same columns); the rows that hold them grow to 40px. */
+@media (hover: none) and (pointer: coarse) {
+  .terminal .terminal__log .t-run,
+  .terminal .terminal__log .t-link {
+    display: inline-block;
+    padding-block: calc((40px - var(--row)) / 2);
+    text-indent: 0;
+  }
+  .terminal .terminal__log .t-copy {
+    min-height: 40px;
+  }
+}

@@ -1,0 +1,54 @@
+<article class="case" id="case-pci" aria-labelledby="case-pci-title" data-case="pci">
+  <p class="case__idx" aria-hidden="true">3</p>
+  <div class="case__body">
+    <p class="case__cmd">$ <b>papalia --certify pci-dss</b></p>
+    <h3 class="case__title" id="case-pci-title">A PCI DSS–compliant module</h3>
+    <div class="prose">
+      <p>I built the security of a <b>PCI DSS–compliant payment module</b> from scratch and implemented <b>all of its security functionality myself</b>, against a <b>very strict deadline</b>. The module was certified by a third-party assessor, whom I dealt with directly.</p>
+      <p>PCI DSS is the security standard for any system that stores, processes or transmits payment card data, and it spans <b>12 requirements</b>, from network security controls to logging, testing and policy.</p>
+    </div>
+    <figure class="case__viz box pci-fig" data-pci>
+      <span class="box__title">cardholder-data.flow</span>
+      <div class="pci" data-pci-mount>
+        <p class="visually-hidden">A test card with the number 4111 1111 1111 1111, valid thru 12/30. The number is read in clear at entry, crosses the network encrypted with TLS, and the module stores it truncated, keeping only the first six and the last four digits.</p>
+        <canvas class="pci__scene" data-pci-scene width="0" height="0" aria-hidden="true"></canvas>
+        <div class="pci__status" data-pci-status>
+          <p class="pci__log" data-pci-log aria-hidden="true"><span class="pci__sp">&gt;</span> <span class="pci__sk" data-pci-stage>entry</span><span class="pci__sv" data-pci-note>card number read in clear</span></p>
+          <p class="pci__sr" data-pci-cur aria-hidden="true"><span class="pci__n" data-pci-cur-n></span> <span data-pci-cur-t></span></p>
+          <button class="cmd cmd--quiet pci__replay" type="button" data-pci-replay aria-label="replay the card data flow" hidden>replay</button>
+        </div>
+        <p class="pci__head" id="pci-reqs-head">PCI DSS v4.0.1 requirements</p>
+        <p class="visually-hidden" aria-live="polite" data-pci-live></p>
+        <ol class="pci__reqs" data-pci-reqs aria-labelledby="pci-reqs-head">
+          <li><button class="pci__req" type="button" data-req="1" aria-describedby="pci-reqs-hint"><span class="pci__line"><span class="pci__n">01</span><span class="pci__t"> network security controls</span></span></button></li>
+          <li><button class="pci__req" type="button" data-req="2" aria-describedby="pci-reqs-hint"><span class="pci__line"><span class="pci__n">02</span><span class="pci__t"> secure configurations</span></span></button></li>
+          <li><button class="pci__req" type="button" data-req="3" aria-describedby="pci-reqs-hint"><span class="pci__line"><span class="pci__n">03</span><span class="pci__t"> protect stored account data</span></span></button></li>
+          <li><button class="pci__req" type="button" data-req="4" aria-describedby="pci-reqs-hint"><span class="pci__line"><span class="pci__n">04</span><span class="pci__t"> strong cryptography in transit</span></span></button></li>
+          <li><button class="pci__req" type="button" data-req="5" aria-describedby="pci-reqs-hint"><span class="pci__line"><span class="pci__n">05</span><span class="pci__t"> protection from malicious software</span></span></button></li>
+          <li><button class="pci__req" type="button" data-req="6" aria-describedby="pci-reqs-hint"><span class="pci__line"><span class="pci__n">06</span><span class="pci__t"> secure systems and software</span></span></button></li>
+          <li><button class="pci__req" type="button" data-req="7" aria-describedby="pci-reqs-hint"><span class="pci__line"><span class="pci__n">07</span><span class="pci__t"> access by business need to know</span></span></button></li>
+          <li><button class="pci__req" type="button" data-req="8" aria-describedby="pci-reqs-hint"><span class="pci__line"><span class="pci__n">08</span><span class="pci__t"> identify users and authenticate access</span></span></button></li>
+          <li><button class="pci__req" type="button" data-req="9" aria-describedby="pci-reqs-hint"><span class="pci__line"><span class="pci__n">09</span><span class="pci__t"> restrict physical access</span></span></button></li>
+          <li><button class="pci__req" type="button" data-req="10" aria-describedby="pci-reqs-hint"><span class="pci__line"><span class="pci__n">10</span><span class="pci__t"> log and monitor all access</span></span></button></li>
+          <li><button class="pci__req" type="button" data-req="11" aria-describedby="pci-reqs-hint"><span class="pci__line"><span class="pci__n">11</span><span class="pci__t"> test security regularly</span></span></button></li>
+          <li><button class="pci__req" type="button" data-req="12" aria-describedby="pci-reqs-hint"><span class="pci__line"><span class="pci__n">12</span><span class="pci__t"> policies and programs</span></span></button></li>
+        </ol>
+        <p class="pci__hint" id="pci-reqs-hint"><span class="hint-kbd">hover, or tab in and use ↑ ↓ ← →, to see where each requirement applies</span><span class="hint-touch">tap a requirement to see where it applies</span></p>
+        <ol class="pci__legend" aria-hidden="true">
+          <li><span class="pci__n">01</span> network security controls</li>
+          <li><span class="pci__n">02</span> secure configurations</li>
+          <li><span class="pci__n">03</span> protect stored account data</li>
+          <li><span class="pci__n">04</span> strong cryptography in transit</li>
+          <li><span class="pci__n">05</span> protection from malicious software</li>
+          <li><span class="pci__n">06</span> secure systems and software</li>
+          <li><span class="pci__n">07</span> access by business need to know</li>
+          <li><span class="pci__n">08</span> identify users and authenticate access</li>
+          <li><span class="pci__n">09</span> restrict physical access</li>
+          <li><span class="pci__n">10</span> log and monitor all access</li>
+          <li><span class="pci__n">11</span> test security regularly</li>
+          <li><span class="pci__n">12</span> policies and programs</li>
+        </ol>
+      </div>
+    </figure>
+  </div>
+</article>

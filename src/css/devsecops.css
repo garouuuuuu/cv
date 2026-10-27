@@ -1,0 +1,165 @@
+/* devsecops.css: case file 2. findings.log (a field of ~31,000 marks under a block-digit counter),
+   the triage policy and the list of recurring patterns. Everything is scoped to #case-devsecops. */
+
+#case-devsecops .burn {
+  display: grid;
+  gap: 22px;
+  min-width: 0;
+}
+
+/* Counter row: block digits, the label set against their bottom edge */
+#case-devsecops .burn__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 8px 2ch;
+  min-width: 0;
+}
+
+/* Sized in CSS px by devsecops.js on whole device pixels (never scaled down, which would blur
+   the pixel glyphs); until then the width="0" height="0" attributes keep them out of the layout */
+#case-devsecops .burn__count,
+#case-devsecops .burn__field {
+  display: block;
+  max-width: none;
+}
+
+#case-devsecops .burn__label {
+  color: var(--fg-3);
+  font-size: var(--t-sm);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* Status line under the field: log text on the left, [ replay ] on the right */
+#case-devsecops .burn__status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0 2ch;
+  min-height: 40px;
+  margin-top: 6px;
+  font-size: var(--t-sm);
+}
+
+#case-devsecops .burn__log {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--fg-3);
+  white-space: nowrap;
+  text-overflow: clip;
+  font-variant-numeric: tabular-nums;
+}
+
+#case-devsecops .burn__v {
+  color: var(--fg);
+}
+
+#case-devsecops .burn__log.is-open .burn__k[data-k="c"] {
+  color: var(--red);
+}
+
+#case-devsecops .burn__replay {
+  flex: none;
+  margin-right: -0.5ch;
+  font-size: var(--t-sm);
+}
+
+#case-devsecops .burn__replay[hidden] {
+  display: none;
+}
+
+/* ---------------------------------------------------------------- Triage policy */
+#case-devsecops .triage {
+  margin-top: 14px;
+  max-width: 112ch;
+}
+
+#case-devsecops .triage__list {
+  display: grid;
+  border-top: 1px dashed var(--line);
+}
+
+#case-devsecops .triage__row {
+  display: grid;
+  grid-template-columns: 38ch minmax(0, 1fr);
+  gap: 0 2ch;
+  padding: 8px 0;
+  border-bottom: 1px dashed var(--line);
+}
+
+#case-devsecops .triage__row dt {
+  color: var(--fg-3);
+}
+
+/* The outcome hangs under its arrow when it wraps. */
+#case-devsecops .triage__row dd {
+  padding-left: 3ch;
+  text-indent: -3ch;
+  color: var(--fg);
+}
+
+#case-devsecops .triage__row dd::before {
+  content: "-> ";
+  content: "-> " / "";
+  color: var(--red);
+}
+
+@media (max-width: 640px) {
+  #case-devsecops .triage__row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ---------------------------------------------------------------- Patterns list */
+#case-devsecops .patterns {
+  margin-top: 14px;
+  max-width: 112ch;
+}
+
+/* List labels, set as shell comments, not as section headings */
+#case-devsecops .triage__title,
+#case-devsecops .patterns__title {
+  margin: 0 0 14px;
+  color: var(--fg-3);
+  font-size: var(--t-xs);
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  line-height: 1.5;
+}
+
+#case-devsecops .triage__title::before,
+#case-devsecops .patterns__title::before {
+  content: "# ";
+  content: "# " / "";
+}
+
+#case-devsecops .patterns__list {
+  list-style: none;
+  columns: 2;
+  column-gap: 4ch;
+  color: var(--fg-2);
+}
+
+#case-devsecops .patterns__list li {
+  padding-left: 2ch;
+  text-indent: -2ch;
+  break-inside: avoid;
+}
+
+#case-devsecops .patterns__list li::before {
+  content: "- ";
+  color: var(--red);
+}
+
+@media (max-width: 640px) {
+  #case-devsecops .patterns__list {
+    columns: 1;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  #case-devsecops .burn__field {
+    cursor: crosshair;
+  }
+}

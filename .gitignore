@@ -1,0 +1,27 @@
+# Build output: the website is built in CI (see .github/workflows/pages.yml)
+site/
+dist/
+.build/
+
+# Local tooling state
+.shots/
+tools/.fontcache/
+node_modules/
+.wrangler/
+__pycache__/
+
+# Credentials never belong here: deploys read them from the environment or CI secrets
+.env
+.env.*
+.dev.vars
+*.pem
+*.key
+
+# Kept locally, not published: the internal build brief and retired sections and drafts
+SPEC.md
+attic/
+
+# Personal contact details and the PDF rendered with them (tools/pdf.mjs): never published
+print/private.json
+print/private/
+print/.render.html

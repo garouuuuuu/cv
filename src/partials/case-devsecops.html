@@ -1,0 +1,50 @@
+<article class="case" id="case-devsecops" aria-labelledby="case-devsecops-title" data-case="devsecops">
+  <p class="case__idx" aria-hidden="true">2</p>
+  <div class="case__body">
+    <p class="case__cmd">$ <b>papalia --devsecops sca,sast,dast,iac</b></p>
+    <h3 class="case__title" id="case-devsecops-title">About 31,000 DevSecOps findings, triaged in five weeks</h3>
+    <div class="prose">
+      <p>In five weeks I triaged about <b>31,000 findings</b> from software composition analysis (<b>SCA</b>), static and dynamic application security testing (<b>SAST</b>, <b>DAST</b>) and infrastructure-as-code scanning (<b>IaC</b>), across software built and shipped at high velocity with AI coding assistants.</p>
+      <p>Not every finding has a fix, and not every fix is worth its cost, so each one received a <b>risk-based decision</b>: fixed where a fix existed, mitigated with compensating controls where none was available, risk-accepted where no solution existed or remediation wasn't proportionate to the risk, and deferred to the next monthly cycle where it could safely wait.</p>
+          <p>Then I built a custom <b>security gate into the CI/CD pipeline</b>, so new code is checked before it ships. In its first month, no new SAST or DAST vulnerabilities were introduced.</p>
+    </div>
+    <figure class="case__viz box burn-fig" data-devsecops>
+      <span class="box__title">findings.log</span>
+      <div class="burn" data-burn-mount role="img" aria-label="About 31,000 DevSecOps findings, drawn as one mark each. The triaged count rises from 0 to about 31,000 as every finding receives a decision.">
+        <div class="burn__head">
+          <canvas class="burn__count" data-burn-count width="0" height="0"></canvas>
+          <span class="burn__label">findings triaged</span>
+        </div>
+        <canvas class="burn__field" data-burn-field width="0" height="0"></canvas>
+      </div>
+      <div class="burn__status">
+        <p class="burn__log" data-burn-log><span class="burn__k" data-k="a">all</span> <span class="burn__v" data-k="b">31,000</span> <span class="burn__k" data-k="c">triaged</span></p>
+        <button class="cmd cmd--quiet burn__replay" type="button" data-burn-replay aria-label="replay the triage" hidden>replay</button>
+      </div>
+    </figure>
+    <div class="triage">
+      <p class="triage__title">triage policy</p>
+      <dl class="triage__list">
+        <div class="triage__row"><dt>a fix exists</dt><dd>fixed</dd></div>
+        <div class="triage__row"><dt>no fix available</dt><dd>mitigated with compensating controls</dd></div>
+        <div class="triage__row"><dt>no solution, or not worth the cost</dt><dd>risk accepted</dd></div>
+        <div class="triage__row"><dt>can safely wait</dt><dd>deferred to the next monthly cycle</dd></div>
+      </dl>
+    </div>
+    <div class="patterns">
+      <p class="patterns__title">recurring patterns in fast-shipped, AI-assisted code</p>
+      <ul class="patterns__list">
+        <li>hardcoded secrets</li>
+        <li>missing authorization checks</li>
+        <li>SQL, NoSQL and shell injection</li>
+        <li>permissive CORS</li>
+        <li>insecure defaults</li>
+        <li>hallucinated or outdated dependencies</li>
+        <li>unvalidated input and SSRF</li>
+        <li>secrets and stack traces in logs</li>
+        <li>weak session and token handling</li>
+        <li>misconfigured infrastructure as code</li>
+      </ul>
+    </div>
+  </div>
+</article>

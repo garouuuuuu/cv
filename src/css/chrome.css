@@ -1,0 +1,409 @@
+/* chrome.css: lead-owned sections (top bar, pager line, description areas, results, role, contact, footer). */
+
+/* ---------------------------------------------------------------- Top bar */
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 60;
+  padding-top: env(safe-area-inset-top, 0px);
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+}
+
+.topbar__inner {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 2ch;
+  height: var(--bar-h);
+  font-size: var(--t-sm);
+}
+
+.topbar__title {
+  color: var(--fg);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+}
+
+/* 4ch gaps: the current link's "> " marker takes the last 2ch, so it sits next to its own link. */
+.topbar__nav {
+  display: flex;
+  justify-content: center;
+  gap: 4ch;
+}
+
+.topbar__nav a {
+  position: relative;
+  color: var(--fg-3);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+@media (hover: hover) {
+  .topbar__nav a:hover {
+    color: var(--on-red);
+  }
+}
+
+.topbar__nav a[aria-current="true"] {
+  color: var(--fg);
+}
+
+/* The marker hangs in the gap before the link, so the row never re-centers as it moves. */
+.topbar__nav a[aria-current="true"]::before {
+  content: "> ";
+  content: "> " / "";
+  position: absolute;
+  right: 100%;
+  color: var(--red);
+  white-space: pre;
+}
+
+.topbar__tools {
+  display: flex;
+  align-items: center;
+  gap: 1ch;
+}
+
+.topbar__tools .cmd {
+  min-height: 32px;
+}
+
+/* Touch: the bar is 44px tall, so its controls can take 40px targets. */
+@media (pointer: coarse) {
+  .topbar__tools .cmd {
+    min-height: 40px;
+  }
+  .topbar__title {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+  }
+}
+
+.topbar__tools [data-terminal-hint] {
+  color: var(--fg-3);
+}
+
+.topbar__tools .cmd:focus-visible [data-terminal-hint],
+.topbar__tools .cmd:active [data-terminal-hint] {
+  color: var(--on-red);
+}
+
+@media (hover: hover) {
+  .topbar__tools .cmd:hover [data-terminal-hint] {
+    color: var(--on-red);
+  }
+}
+
+/* Below this width the six links and their marker no longer fit between the title and the tools. */
+@media (max-width: 940px) {
+  .topbar__nav {
+    display: none;
+  }
+  .topbar__inner {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+}
+
+/* ---------------------------------------------------------------- Pager line (desktop) */
+.pager {
+  display: none;
+}
+
+@media (min-width: 900px) and (hover: hover) and (pointer: fine) {
+  .pager {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 60;
+    display: flex;
+    justify-content: space-between;
+    gap: 2ch;
+    height: var(--pager-h);
+    padding: 0 var(--gutter);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    align-items: center;
+    background: var(--red);
+    color: var(--on-red);
+    font-size: var(--t-xs);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  body {
+    padding-bottom: var(--pager-h);
+  }
+  /* Keyboard focus scrolled into view stops above the pager instead of under it. */
+  html {
+    scroll-padding-bottom: calc(var(--pager-h) + 16px);
+  }
+}
+
+.pager__keys {
+  white-space: pre;
+}
+
+/* ---------------------------------------------------------------- Keyboard vs touch hints */
+.hint-touch {
+  display: none;
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .hint-kbd {
+    display: none;
+  }
+  .hint-touch {
+    display: inline;
+  }
+}
+
+/* ---------------------------------------------------------------- Results */
+.results {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--t-base);
+}
+
+.results th,
+.results td {
+  padding: 16px 2ch 16px 0;
+  text-align: left;
+  vertical-align: baseline;
+}
+
+.results tbody tr {
+  border-bottom: 1px dashed var(--line-2);
+}
+
+.results tbody tr:first-child {
+  border-top: 1px dashed var(--line-2);
+}
+
+/* A table paints a row's border cell by cell and the dashes restart at every cell. Each row is
+   laid out as its own grid instead, so every rule is one element's border: one unbroken dashed
+   line. The columns stay aligned: a fixed first column, and a status column at least as wide as
+   the longest status. */
+@media (min-width: 761px) {
+  .results,
+  .results tbody {
+    display: block;
+  }
+  .results tbody tr {
+    display: grid;
+    grid-template-columns: 24ch minmax(0, 1fr) minmax(12ch, max-content);
+    /* Every cell has the same font, line height and top padding, so aligning the starts lines up
+       the first lines (baseline would follow the wrapped value's last line). */
+    align-items: start;
+  }
+}
+
+.results tbody th {
+  width: 24ch;
+  color: var(--fg);
+  font-weight: 700;
+}
+
+.res__val {
+  display: inline-block;
+  min-width: 18ch;
+  margin-right: 2ch;
+  color: var(--fg-2);
+}
+
+.res__bar {
+  white-space: pre;
+}
+
+.res__edge {
+  color: var(--fg-3);
+}
+
+.res__on {
+  color: var(--red);
+}
+
+.res__off {
+  color: var(--red-4);
+}
+
+.res__status {
+  color: var(--red);
+  text-align: right !important;
+  white-space: nowrap;
+  padding-right: 0 !important;
+}
+
+@media (max-width: 760px) {
+  .results,
+  .results tbody,
+  .results tr,
+  .results th,
+  .results td {
+    display: block;
+    width: 100%;
+  }
+  .results tr {
+    padding: 14px 0;
+    border-bottom: 1px dashed var(--line-2);
+  }
+  .results tbody tr:first-child {
+    border-top: 1px dashed var(--line-2);
+  }
+  .results th,
+  .results td,
+  .results tbody tr:first-child th,
+  .results tbody tr:first-child td {
+    padding: 2px 0;
+    border: 0;
+  }
+  .res__val {
+    display: block;
+    margin: 0 0 4px;
+  }
+  .res__status {
+    text-align: left !important;
+  }
+  .res__status::before {
+    content: "-> ";
+    content: "-> " / "";
+    color: var(--fg-3);
+  }
+}
+
+/* ---------------------------------------------------------------- Description areas */
+.areas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 3ch;
+  max-width: 112ch;
+  margin-top: 32px;
+  padding-top: 18px;
+  border-top: 1px dashed var(--line);
+  list-style: none;
+  color: var(--fg-2);
+  font-size: var(--t-sm);
+}
+
+.areas span {
+  color: var(--red);
+}
+
+/* ---------------------------------------------------------------- Role */
+.role {
+  display: grid;
+  gap: 30px;
+  max-width: 112ch;
+  margin-top: 36px;
+  list-style: none;
+}
+
+.role__item {
+  display: grid;
+  grid-template-columns: 4ch minmax(0, 1fr);
+}
+
+.role__n {
+  color: var(--red);
+  font-weight: 700;
+}
+
+.role__title {
+  color: var(--fg);
+  font-size: var(--t-base);
+  font-weight: 700;
+  line-height: var(--lh);
+}
+
+.role__req {
+  color: var(--fg-2);
+}
+
+/* The evidence line hangs under its arrow. */
+.role__ev {
+  margin-top: 6px;
+  padding-left: 3ch;
+  text-indent: -3ch;
+  color: var(--fg);
+}
+
+.role__arrow {
+  color: var(--red);
+}
+
+/* ---------------------------------------------------------------- Contact */
+.kv {
+  display: grid;
+  max-width: 96ch;
+  margin-top: 32px;
+  border-top: 1px dashed var(--line-2);
+}
+
+.kv__row {
+  display: grid;
+  grid-template-columns: 12ch minmax(0, 1fr);
+  align-items: center;
+  min-height: 52px;
+  border-bottom: 1px dashed var(--line-2);
+}
+
+.kv__row dt {
+  color: var(--fg-3);
+}
+
+.history .kv__row {
+  grid-template-columns: 14ch minmax(0, 1fr);
+}
+
+.kv__row dd {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0 2ch;
+  min-width: 0;
+}
+
+.kv__val {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  color: var(--fg);
+}
+
+.contact__hint {
+  margin-top: 24px;
+  font-size: var(--t-sm);
+}
+
+@media (max-width: 480px) {
+  .kv__row {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 10px 0;
+  }
+}
+
+/* ---------------------------------------------------------------- Footer */
+.manfoot {
+  margin-top: var(--section-y);
+}
+
+.manfoot__line {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 2ch;
+  margin-top: var(--section-y);
+  padding-block: 16px calc(20px + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--line);
+  color: var(--fg-3);
+  font-size: var(--t-sm);
+}
+
+.kv__val.placeholder {
+  color: var(--fg-3);
+  text-decoration: underline dashed var(--line-2);
+  text-underline-offset: 4px;
+}

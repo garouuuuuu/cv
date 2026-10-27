@@ -1,0 +1,37 @@
+<dialog class="terminal" data-terminal hidden role="dialog" aria-modal="true" aria-labelledby="terminal-title" aria-describedby="terminal-about">
+  <div class="terminal__scrim" data-terminal-scrim aria-hidden="true"></div>
+  <div class="terminal__win" data-terminal-win tabindex="-1">
+    <div class="terminal__top">
+      <span class="terminal__seg terminal__seg--lead" aria-hidden="true"></span>
+      <h2 class="terminal__title" id="terminal-title"><span class="visually-hidden">shell </span>papalia@cv: ~</h2>
+      <span class="terminal__seg" aria-hidden="true"></span>
+      <button class="cmd cmd--quiet terminal__close" type="button" data-terminal-close aria-label="close the shell"><span class="hint-kbd">esc</span><span class="hint-touch">close</span></button>
+      <span class="terminal__seg terminal__seg--tail" aria-hidden="true"></span>
+    </div>
+    <p class="visually-hidden" id="terminal-about">An interactive version of this résumé. Type summary, role or contact, or help to list every command, and press Enter. Tab completes, the up and down arrows walk the history, Escape closes.</p>
+    <div class="terminal__screen" data-terminal-screen>
+      <div class="terminal__log" data-terminal-out role="log" aria-live="polite"></div>
+      <form class="terminal__prompt" data-terminal-form autocomplete="off" novalidate>
+        <label class="terminal__ps1" for="terminal-input"><span aria-hidden="true">papalia@cv:~$</span><span class="visually-hidden">command</span></label>
+        <span class="terminal__line" data-terminal-line>
+          <span class="terminal__mirror" data-terminal-mirror aria-hidden="true"></span>
+          <input class="terminal__input" id="terminal-input" name="command" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go" maxlength="256" data-terminal-input>
+        </span>
+      </form>
+    </div>
+    <div class="terminal__keys" role="group" aria-label="quick commands">
+      <button class="cmd cmd--quiet" type="button" data-run="summary">summary</button>
+      <button class="cmd cmd--quiet" type="button" data-run="role">role</button>
+      <button class="cmd cmd--quiet" type="button" data-run="cases">cases</button>
+      <button class="cmd cmd--quiet" type="button" data-run="skills">skills</button>
+      <button class="cmd cmd--quiet" type="button" data-run="contact">contact</button>
+      <button class="cmd cmd--quiet" type="button" data-run="help">help</button>
+    </div>
+    <div class="terminal__bottom" aria-hidden="true">
+      <span class="terminal__seg"></span>
+      <span class="terminal__hint hint-kbd">tab completes&nbsp;&nbsp;&uarr;&darr; history</span>
+      <span class="terminal__seg terminal__seg--lead"></span>
+    </div>
+    <span class="terminal__pen" data-terminal-pen aria-hidden="true"></span>
+  </div>
+</dialog>
