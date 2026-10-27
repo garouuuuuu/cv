@@ -65,11 +65,15 @@ const secrets = join(print, "private.json");
 if (existsSync(secrets)) {
   const v = JSON.parse(readFileSync(secrets, "utf8"));
   const fields = { ...v, phone_tel: String(v.phone || "").replace(/[^\d+]/g, "") };
-  const privateHtml = template.replace(/\{\{(\w+)\}\}/g, (m, k) => {
-    if (!fields[k]) throw new Error(`print/private.json lacks "${k}"`);
-    return fields[k];
-  });
-  render(privateHtml, join(print, "private", "Luigi-Papalia-CV-Security-Engineer.pdf"));
+  const fill = (html) =>
+    html.replace(/\{\{(\w+)\}\}/g, (m, k) => {
+      if (!fields[k]) throw new Error(`print/private.json lacks "${k}"`);
+      return fields[k];
+    });
+  render(fill(template), join(print, "private", "Luigi-Papalia-CV-Security-Engineer.pdf"));
+  // The cover letter (print/cover-letter.html, gitignored) exists only in its private form.
+  const letter = join(print, "cover-letter.html");
+  if (existsSync(letter)) render(fill(readFileSync(letter, "utf8")), join(print, "private", "Luigi-Papalia-Cover-Letter.pdf"));
 } else {
   console.log("print/private.json not found: private variant skipped");
 }
